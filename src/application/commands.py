@@ -25,4 +25,7 @@ class CreateClinic(Command):
 @dataclass
 class ChangeClinic(Command):
     ref: str
-    qty: int
+
+@dataclass
+class CancelPatient(Command):
+    ref: str

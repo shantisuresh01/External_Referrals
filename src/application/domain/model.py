@@ -2,14 +2,16 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from typing import Optional, List, Set
-from ...application import commands, events
+from src.application import commands, events
+from .Provider.root_entity import Provider, Procedure
 
 class ProviderUnavailable(Exception):
     pass
 
+
 class Product:
     def __init__(self, procedure: str, providers: List[Provider], version_number: int = 0):
-        self.procedure  procedure
+        self.procedure = procedure
         self.providers = providers
         self.version_number = version_number
         self.events = []  # type: List[events.Event]
@@ -25,37 +27,32 @@ class Product:
             return None
 
     def change_provider_availability(self, ref: str, available: bool):
-        provider = next(p for p in self.providers if p.provier_ref == ref)
+        provider = next(p for p in self.providers if p.provier_id == ref)
         provider._available = available
 
 
-    def cancel_referral(self, provider_ref: str, referral: Referral):
-        provider = next(p for p in self.providers if p.provider_ref == provider_ref)
-        referral = provider.unassign_referral(referral: Referral)
-        self.events.append(commands.CancelPatient(referral.patient.patient_ref)
-
-
+    def cancel_referral(self, provider_id: str, referral: Referral):
+        provider = next(p for p in self.providers if p.provider_id == provider_id)
+        referral = provider.unassign_referral(referral)
+        self.events.append(commands.CancelPatient(referral.patient.patient_id)
 
 @dataclass(unsafe_hash=True)
 class Referral:
-    referral_ref: str
+    referral_id: str
     procedure: str
     patient_id: str
     provider: Provider # referral may or may not specify a particular provider
 
-
-
-
     def __repr__(self):
-        return f"<Provider {self.provider_ref}>"
+        return f"<Provider {self.provider_id}>"
 
     def __eq__(self, other):
         if not isinstance(other, Provider):
             return False
-        return other.provider_ref == self.provider_ref
+        return other.provider_ref == self.provider_id
 
     def __hash__(self):
-        return hash(self.provider_ref)
+        return hash(self.provider_id)
 
     def __gt__(self, other):
         if self.eta is None:
@@ -81,3 +78,6 @@ class Referral:
 
     def can_assign(self, referral: Referral) -> bool:
         return referral.treatment in self.treatments and self._available
+
+
+
