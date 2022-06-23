@@ -6,7 +6,7 @@
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" prefix="og: http://ogp.me/ns#">  <!--<![endif]-->
 <head>
-  <title>{% block page-title %}DjangoShell{% endblock page-title %}</title>
+  <title>{% block page-title %}External Referrals{% endblock page-title %}</title>
 
   <meta http-equiv="content-type" content="text-html; charset=utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -37,7 +37,7 @@
 
 	{% block body-content %}
 			<div id="header" class = "{% block header-class %} navbar-wrapper {% endblock header-class %}">
-                <div class="welcome-nav-logo"><img src="{% static 'img/External_Referrals_Dwg.png' %}" width="200px" alt='DjangoShell logo'></div>
+                <div class="welcome-nav-logo"><img src="{% static 'img/External_Referrals_Dwg.png' %}" width="200px" alt='External Referrals logo'></div>
                 {% if user.is_authenticated %}
 							<div class="navbar">
 								<ul id="masthead">

@@ -7,15 +7,15 @@ from django.views.generic.base import TemplateView
 from django.shortcuts import redirect
 
 class LandingView(TemplateView):
-    template_name = 'External_Referrals/welcome.html'
+    template_name = 'registration/welcome.html'
     page_name = "WelcomePage"
     
 class AboutTheProgramView(TemplateView):
-    template_name = 'External_Referrals/about.html'
+    template_name = 'registration/about.html'
     page_name = 'AboutOurProgram'
 
 class BravoView(TemplateView):
-    template_name = 'External_Referrals/bravo.html'
+    template_name = 'registration/bravo.html'
     page_name = "WelcomePage"
 
 def whereto(request):

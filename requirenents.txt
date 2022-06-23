@@ -5,3 +5,4 @@ requests[security]
 django-registration
 mysqlclient
 pytz
+django-localflavor

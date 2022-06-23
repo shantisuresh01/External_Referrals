@@ -1,5 +1,5 @@
 """
-WSGI config for External_Referrals project.
+WSGI config for registration project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
