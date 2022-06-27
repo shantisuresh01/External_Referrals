@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from typing import Optional, List, Set
-from src.application import commands, events
+from src.djangoproject import commands, events
 from .Provider.root_entity import Provider, Procedure
 
 class ProviderUnavailable(Exception):

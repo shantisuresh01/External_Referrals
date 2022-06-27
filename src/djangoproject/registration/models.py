@@ -7,6 +7,25 @@ from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin)
 from django.db import models
 from django.utils import timezone
+from localflavor.us.models import USStateField, STATE_CHOICES, USPostalCodeField
+from django.core.validators import RegexValidator
+from phonenumber_field.modelfields import PhoneNumberField
+
+class Address(models.Model):
+    user = models.CharField(max_length=30)
+    address = models.CharField(max_length=50)
+    city = models.CharField(max_length=30, default="")
+    state = USStateField(choices=STATE_CHOICES)
+    zipcode = USPostalCodeField()
+    country = models.CharField(max_length=50, default="")
+
+    class Meta:
+        verbose_name = 'Address'
+        verbose_name_plural = 'Address'
+
+    def __str__(self):
+        return self.name
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **kwargs):
@@ -36,32 +55,13 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
-    
-class EventManager(models.Manager):
-    def with_counts(self):
-        from django.db import connection
-        cursor = connection.cursor()
-        cursor.execute("""
-            SELECT u.id, u.email, e.name, COUNT(*)
-            FROM datamodel_participant u, djangotailoring_event e
-            WHERE u.id = e.user_id and e.name LIKE "%UserLoggedIn%"
-            GROUP BY u.id, e.name
-            ORDER BY e.timestamp DESC""")
-        result_list = []
-        for row in cursor.fetchall():
-            u = self.model(id=row[0], email=row[1])
-            u.name = row[2]
-            u.count = row[3]
-            result_list.append(u)
-        return result_list
-    
+
 class User(AbstractBaseUser):
 
     USERNAME_FIELD = 'email'
 
     objects = UserManager()
-    login_events = EventManager()
-    
+    userid = models.CharField(max_length=255)
     email = models.EmailField('email', unique=True)
     date_joined = models.DateTimeField('date joined', default=timezone.now)
     is_staff = models.BooleanField('staff status', default=False,
@@ -70,6 +70,9 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField('active', default=True,
                                     help_text='Designates whether this user should be treated as '
                                                 'active. Unselect this instead of deleting account.')
+    is_referrer = models.BooleanField('referrer', default=True,
+                                    help_text='Designates whether this user should be treated as a Referrer '
+                                              'account. Unselect this instead of deleting account.')
 
     def get_full_name(self):
         full_name = str(self.email)
@@ -77,6 +80,11 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.get_full_name()
+
+    def to_domain(self):
+        return domain_model.User(
+            orderid=self.userid, sku=self.sku, qty=self.qty
+        )
 
     @property
     def username(self):
@@ -86,4 +94,10 @@ class User(AbstractBaseUser):
     @property
     def userid(self):
         return self.id
-        
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    phone = PhoneNumberField(null=True, validators=[RegexValidator(r'^\d{3}-\d{3}-\d{4}$')])
+
+
