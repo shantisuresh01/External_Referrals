@@ -17,10 +17,15 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from django.contrib.auth.views import logout_then_login
 from django.views.generic.base import RedirectView
+from django_registration.backends.activation.views import RegistrationView
+from .forms import ReferrerRegistrationForm
 from .views import LandingView, whereto, BravoView, whereto, AboutTheProgramView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/register/',
+        RegistrationView.as_view(form_class=ReferrerRegistrationForm),
+        name='django_registration_register'),
     path('accounts/', include('django_registration.backends.activation.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     re_path(r'^logout/$', logout_then_login, name='logout'),

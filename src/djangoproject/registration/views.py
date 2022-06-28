@@ -5,6 +5,8 @@ Created on May 26, 2019
 '''
 from django.views.generic.base import TemplateView
 from django.shortcuts import redirect
+import datetime
+import time
 
 class LandingView(TemplateView):
     template_name = 'registration/welcome.html'
@@ -23,5 +25,9 @@ def whereto(request):
     if not user.is_authenticated:
         return redirect('welcome')
 
-    if user.is_active == True and user.is_authenticated:
+    if user.is_active and user.is_authenticated:
         return redirect('bravo_page')
+
+def first_login(user):
+    now = datetime.datetime.now()
+#    if time.strptime(user.date_joined,'%Y-%m-%d  %X.%f') <

@@ -9,23 +9,7 @@ from django.db import models
 from django.utils import timezone
 from localflavor.us.models import USStateField, STATE_CHOICES, USPostalCodeField
 from django.core.validators import RegexValidator
-from phonenumber_field.modelfields import PhoneNumberField
-
-class Address(models.Model):
-    user = models.CharField(max_length=30)
-    address = models.CharField(max_length=50)
-    city = models.CharField(max_length=30, default="")
-    state = USStateField(choices=STATE_CHOICES)
-    zipcode = USPostalCodeField()
-    country = models.CharField(max_length=50, default="")
-
-    class Meta:
-        verbose_name = 'Address'
-        verbose_name_plural = 'Address'
-
-    def __str__(self):
-        return self.name
-
+from phone_field import PhoneField
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **kwargs):
@@ -95,9 +79,34 @@ class User(AbstractBaseUser):
     def userid(self):
         return self.id
 
-class Profile(models.Model):
+    @property
+    def has_profile(self):
+        if self.is_referrer:
+            return True
+        else:
+            return False
+
+class ReferrerProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="referrer_profile")
+    first_name =  models.CharField(max_length=50)
+    middle_name =  models.CharField(max_length=50)
+    last_name =  models.CharField(max_length=50)
+    street_address = models.CharField(max_length=50)
+    city = models.CharField(max_length=30, default="")
+    state = USStateField(choices=STATE_CHOICES)
+    zipcode = USPostalCodeField()
+    country = models.CharField(max_length=50, default="United States")
+    phone = models.CharField(max_length=12, help_text='Contact phone number')
+    extension = models.CharField(max_length=6, help_text='Phone extension')
+    # validators=[RegexValidator(r'^\d{3}-\d{3}-\d{4}$')])
+    class Meta:
+        verbose_name = 'ReferrerProfile'
+        verbose_name_plural = 'ReferrerProfile'
+
+class StaffProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
-    phone = PhoneNumberField(null=True, validators=[RegexValidator(r'^\d{3}-\d{3}-\d{4}$')])
+    first_name =  models.CharField(max_length=50)
+    middle_name =  models.CharField(max_length=50)
+    last_name =  models.CharField(max_length=50)
 
 

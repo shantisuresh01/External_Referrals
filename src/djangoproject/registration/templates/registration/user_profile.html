@@ -1,0 +1,26 @@
+{% extends "utils/base.html" %}
+{% load static %}
+{% block page-title %}{{ block.super }}Welcome | {% endblock page-title %} 
+{% block content %}
+<div class="user_profile">
+    <div class="flex-wrapper">
+        <div id="user_profile_if">
+            <h3>User Profile</h3>
+            <form method="post">
+                  {% csrf_token %}
+                  {{ user_form.as_p }}
+                  {{ profile_form.as_p }}
+                  <button type="submit">Save changes</button>
+            </form>
+        </div>
+      <div class="sign-in-options">
+            <h4>I am a… </h4>
+            <button class="btn nav-button" onclick="window.location.href='/accounts/register/'">New User</button>
+            <button class="btn nav-button" onclick="window.location.href='{% url 'login' %}'">Returning User</button>
+        </div>
+    </div>
+      
+    </div>
+</div>
+
+{% endblock content %}

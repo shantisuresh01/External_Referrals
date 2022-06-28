@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'src.djangoproject.utils',
     'settings',
     'src.djangoproject.registration',
+    'phone_field',
 ]
 
 MIDDLEWARE = [
@@ -130,7 +131,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SECURITY_WARN_AFTER=1800 # 10 minutes
 SESSION_SECURITY_EXPIRE_AFTER=1800 # 10 minute
 LOGIN_REDIRECT_URL = '/whereto'
-
+AUTH_USER_MODEL = "registration"
 # Django support for adding missing Primary key fields on models:
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
